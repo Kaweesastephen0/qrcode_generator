@@ -61,7 +61,7 @@ const Register = () => {
       <div className="auth-card auth-card--auth">
         <div className="auth-card__header auth-card__header--compact">
           <div>
-            <p className="eyebrow">Qr code Generator</p>
+            <p className="eyebrow">QR Code Business Card Generator</p>
             <h1>Register your account</h1>
           </div>
         </div>

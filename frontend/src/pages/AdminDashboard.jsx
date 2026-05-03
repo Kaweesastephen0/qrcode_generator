@@ -9,7 +9,7 @@ const AdminDashboard = () => {
         <div className="dashboard-header">
           <div>
             <h1>Admin Portal</h1>
-            <p className="subtitle">Manage QR Builder resources and view your account details.</p>
+            <p className="subtitle">Manage QR Code Business Card Generator resources and view your account details.</p>
           </div>
           <button className="secondary-button" onClick={logout}>
             Logout

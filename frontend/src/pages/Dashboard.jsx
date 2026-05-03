@@ -9,7 +9,7 @@ const Dashboard = () => {
         <div className="dashboard-header">
           <div>
             <h1>Welcome back, {user?.fullName || 'User'}</h1>
-            <p className="subtitle">Your account is active and ready for QR creation.</p>
+            <p className="subtitle">Your account is active and ready for QR code generation.</p>
           </div>
           <button className="secondary-button" onClick={logout}>
             Logout

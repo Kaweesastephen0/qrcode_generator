@@ -17,7 +17,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'QR Builder Authentication API is running.' });
+  res.json({ message: 'QR Code Business Card Generator Authentication API is running.' });
 });
 
 app.use((err, req, res, next) => {
@@ -27,7 +27,7 @@ app.use((err, req, res, next) => {
 
 async function createAdminUser() {
   try {
-    const existingAdmin = await User.findOne({ email: 'admin@qrbuilder.com' });
+    const existingAdmin = await User.findOne({ email: process.env.ADMIN_EMAIL });
 
     if (existingAdmin) {
       console.log('Admin user already exists.');
@@ -35,19 +35,19 @@ async function createAdminUser() {
     }
 
     const salt = await bcrypt.genSalt(12);
-    const hashedPassword = await bcrypt.hash('Admin@123', salt);
+    const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, salt);
 
     const admin = new User({
-      fullName: 'QR Builder Admin',
+      fullName: 'QR Code Business Card Generator Admin',
       username: 'admin',
-      email: 'admin@qrbuilder.com',
+      email: process.env.ADMIN_EMAIL,
       password: hashedPassword,
       role: 'admin',
       isActive: true
     });
 
     await admin.save();
-    console.log('Admin user created: admin@qrbuilder.com / Admin@123');
+    console.log(`Admin user created: ${process.env.ADMIN_EMAIL} / ${process.env.ADMIN_PASSWORD}`);
   } catch (error) {
     console.error('Failed to create admin user:', error.message);
   }
