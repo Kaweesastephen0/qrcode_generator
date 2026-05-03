@@ -71,7 +71,7 @@ const Register = () => {
             Full Name
             <div className="input-icon">
               <i className="fa-solid fa-signature" />
-              <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="Jane Doe" />
+              <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="Enter full name" />
             </div>
           </label>
 
@@ -79,7 +79,7 @@ const Register = () => {
             Username
             <div className="input-icon">
               <i className="fa-solid fa-user" />
-              <input name="username" value={form.username} onChange={handleChange} placeholder="janedoe" />
+              <input name="username" value={form.username} onChange={handleChange} placeholder="Enter username" />
             </div>
           </label>
 
@@ -87,13 +87,13 @@ const Register = () => {
             Email
             <div className="input-icon">
               <i className="fa-solid fa-envelope" />
-              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="jane@example.com" />
+              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="Enter email" />
             </div>
           </label>
 
           <label className="field-label field-label--password">
             Password
-            <div className="password-row input-icon">
+            <div className="input-icon">
               <i className="fa-solid fa-lock" />
               <input
                 name="password"
@@ -104,10 +104,10 @@ const Register = () => {
               />
               <button
                 type="button"
-                className="ghost-button"
+                className="eye-toggle"
                 onClick={() => setShowPassword((current) => !current)}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
               </button>
             </div>
           </label>
@@ -123,6 +123,13 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Confirm password"
               />
+              <button
+                type="button"
+                className="eye-toggle"
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
+              </button>
             </div>
           </label>
 
