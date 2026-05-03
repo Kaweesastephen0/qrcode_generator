@@ -58,6 +58,9 @@ export const isAdmin = (req, res, next) => {
   next();
 };
 
+// Alias for isAdmin (for consistency)
+export const requireAdmin = isAdmin;
+
 // Check if user owns the resource
 export const checkOwnership = (paramName = 'userId') => {
   return (req, res, next) => {

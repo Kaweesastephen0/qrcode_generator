@@ -16,7 +16,7 @@ export default function Navbar() {
     <nav className="bg-white shadow-md border-b border-gray-200">
       <div className="px-6 py-4 flex justify-between items-center">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-indigo-600">QR Card</h1>
+          <h1 className="text-xl font-bold text-indigo-600">QR Generator</h1>
         </div>
 
         <div className="flex items-center gap-4">

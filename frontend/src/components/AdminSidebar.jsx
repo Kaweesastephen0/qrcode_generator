@@ -1,16 +1,17 @@
 import { NavLink } from 'react-router-dom';
+import { BarChart3, Users, Briefcase } from 'lucide-react';
 
 export default function AdminSidebar() {
   const navItems = [
-    { path: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/admin/users', label: 'Manage Users', icon: '👥' },
-    { path: '/admin/profiles', label: 'Manage Profiles', icon: '💼' },
+    { path: '/admin/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { path: '/admin/users', label: 'Manage Users', icon: Users },
+    { path: '/admin/profiles', label: 'Manage Profiles', icon: Briefcase },
   ];
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-purple-700 to-purple-900 text-white shadow-xl">
+    <aside className="w-64 bg-purple-700 text-white shadow-xl">
       <div className="p-6">
-        <h2 className="text-2xl font-bold">QR Card</h2>
+        <h2 className="text-2xl font-bold">QR Generator</h2>
         <p className="text-purple-200 text-sm">Admin Dashboard</p>
       </div>
 
@@ -27,7 +28,7 @@ export default function AdminSidebar() {
               }`
             }
           >
-            <span className="text-xl">{item.icon}</span>
+            <item.icon className="w-5 h-5" />
             <span className="font-semibold">{item.label}</span>
           </NavLink>
         ))}

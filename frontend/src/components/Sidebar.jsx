@@ -1,14 +1,15 @@
 import { NavLink } from 'react-router-dom';
+import { BarChart3, Briefcase, Plus } from 'lucide-react';
 
 export default function Sidebar() {
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/my-profiles', label: 'My Profiles', icon: '💼' },
-    { path: '/create-profile', label: 'Create Profile', icon: '➕' },
+    { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+    { path: '/my-profiles', label: 'My Profiles', icon: Briefcase },
+    { path: '/create-profile', label: 'Create Profile', icon: Plus },
   ];
 
   return (
-    <aside className="w-64 bg-gradient-to-b from-indigo-700 to-indigo-900 text-white shadow-xl">
+    <aside className="w-64 bg-indigo-700 text-white shadow-xl">
       <div className="p-6">
         <h2 className="text-2xl font-bold">QR Card</h2>
         <p className="text-indigo-200 text-sm">Business Card & Analytics</p>
@@ -27,7 +28,7 @@ export default function Sidebar() {
               }`
             }
           >
-            <span className="text-xl">{item.icon}</span>
+            <item.icon className="w-5 h-5" />
             <span className="font-semibold">{item.label}</span>
           </NavLink>
         ))}

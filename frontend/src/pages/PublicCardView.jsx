@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Phone, Mail, Globe } from 'lucide-react';
 import { profileAPI, analyticsAPI } from '../api/client.js';
 
 export default function PublicCardView() {
@@ -30,7 +31,7 @@ export default function PublicCardView() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -41,7 +42,7 @@ export default function PublicCardView() {
 
   if (error || !profile) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center">
           <p className="text-red-600 text-xl">{error}</p>
         </div>
@@ -50,10 +51,10 @@ export default function PublicCardView() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-sm w-full overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-blue-600 h-32"></div>
+        <div className="bg-indigo-600 h-32"></div>
 
         {/* Profile Card */}
         <div className="px-6 pb-6">
@@ -82,14 +83,14 @@ export default function PublicCardView() {
           {/* Contact Info */}
           <div className="mt-6 space-y-3 border-t pt-6">
             <div className="flex items-center justify-center space-x-2 text-gray-700">
-              <span>📧</span>
+              <Mail className="w-4 h-4" />
               <a href={`mailto:${profile.email}`} className="hover:text-indigo-600">
                 {profile.email}
               </a>
             </div>
 
             <div className="flex items-center justify-center space-x-2 text-gray-700">
-              <span>📱</span>
+              <Phone className="w-4 h-4" />
               <a href={`tel:${profile.phone}`} className="hover:text-indigo-600">
                 {profile.phone}
               </a>
@@ -97,7 +98,7 @@ export default function PublicCardView() {
 
             {profile.website && (
               <div className="flex items-center justify-center space-x-2 text-gray-700">
-                <span>🌐</span>
+                <Globe className="w-4 h-4" />
                 <a
                   href={profile.website}
                   target="_blank"

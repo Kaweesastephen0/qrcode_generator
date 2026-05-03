@@ -1,20 +1,20 @@
 import express from 'express';
 import {
-  logScan,
+  getQRAnalytics,
   getProfileAnalytics,
   getScanLogs,
   getUserAnalytics,
 } from '../controllers/analyticsController.js';
-import { authenticate } from '../middleware/auth.js';
+import { authenticate, requireAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Public route - log scan when QR is accessed
-router.post('/log/:profileId', logScan);
-
-// Protected routes
+// Protected routes for users
+router.get('/user/overview', authenticate, getUserAnalytics);
 router.get('/profile/:profileId', authenticate, getProfileAnalytics);
 router.get('/scans/:profileId', authenticate, getScanLogs);
-router.get('/user/overview', authenticate, getUserAnalytics);
+
+// Admin routes
+router.get('/qr/:qrCodeId', authenticate, requireAdmin, getQRAnalytics);
 
 export default router;
