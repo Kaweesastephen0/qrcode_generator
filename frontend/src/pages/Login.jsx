@@ -62,7 +62,7 @@ const Login = () => {
 
           <label className="field-label field-label--password">
             Password
-            <div className="password-row input-icon">
+            <div className="input-icon">
               <i className="fa-solid fa-lock" />
               <input
                 name="password"
@@ -73,10 +73,10 @@ const Login = () => {
               />
               <button
                 type="button"
-                className="ghost-button"
+                className="eye-toggle"
                 onClick={() => setShowPassword((current) => !current)}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                <i className={`fa-solid ${showPassword ? 'fa-dot-circle' : 'fa-circle'}`} />
               </button>
             </div>
           </label>

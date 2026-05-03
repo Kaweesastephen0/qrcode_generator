@@ -107,7 +107,7 @@ const Register = () => {
                 className="eye-toggle"
                 onClick={() => setShowPassword((current) => !current)}
               >
-                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
+                <i className={`fa-solid ${showPassword ? 'fa-dot-circle' : 'fa-circle'}`} />
               </button>
             </div>
           </label>
@@ -128,7 +128,7 @@ const Register = () => {
                 className="eye-toggle"
                 onClick={() => setShowPassword((current) => !current)}
               >
-                <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`} />
+                <i className={`fa-solid ${showPassword ? 'fa-dot-circle' : 'fa-circle'}`} />
               </button>
             </div>
           </label>
