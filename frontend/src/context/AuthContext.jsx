@@ -1,11 +1,12 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import { authAPI } from '../api/client.js';
+import { getCookie, setCookie, deleteCookie } from '../utils/cookies.js';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(getCookie('token'));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -17,13 +18,13 @@ export const AuthProvider = ({ children }) => {
           setLoading(true);
           const response = await authAPI.getCurrentUser();
           setUser(response.data.data.user);
-          localStorage.setItem('user', JSON.stringify(response.data.data.user));
+          setCookie('user', JSON.stringify(response.data.data.user));
         } catch (err) {
           console.error('Token verification failed:', err);
           setToken(null);
           setUser(null);
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          deleteCookie('token');
+          deleteCookie('user');
         } finally {
           setLoading(false);
         }
@@ -46,8 +47,8 @@ export const AuthProvider = ({ children }) => {
       const { token: newToken, user: newUser } = response.data.data;
       setToken(newToken);
       setUser(newUser);
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      setCookie('token', newToken);
+      setCookie('user', JSON.stringify(newUser));
       return response.data;
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed';
@@ -66,8 +67,8 @@ export const AuthProvider = ({ children }) => {
       const { token: newToken, user: newUser } = response.data.data;
       setToken(newToken);
       setUser(newUser);
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
+      setCookie('token', newToken);
+      setCookie('user', JSON.stringify(newUser));
       return response.data;
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed';
@@ -87,8 +88,8 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setToken(null);
       setUser(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      deleteCookie('token');
+      deleteCookie('user');
       setLoading(false);
     }
   };

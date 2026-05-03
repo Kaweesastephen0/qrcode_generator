@@ -295,16 +295,14 @@ export const getUserAnalytics = asyncHandler(async (req, res) => {
     res.status(HTTP_STATUS.OK).json({
       success: true,
       data: {
-        summary: {
-          totalProfiles: profiles.length,
-          totalQRCodes: qrCodes.length,
-          totalScans,
-          todayScans,
-          uniqueVisitors: uniqueVisitors.length,
-          returningVisitors,
-          newVisitors: uniqueVisitors.length - returningVisitors,
-        },
-        deviceBreakdown: deviceStats.reduce((acc, item) => {
+        totalProfiles: profiles.length,
+        totalQRCodes: qrCodes.length,
+        totalScans,
+        todayScans,
+        uniqueVisitors: uniqueVisitors.length,
+        returningVisitors,
+        newVisitors: uniqueVisitors.length - returningVisitors,
+        deviceDistribution: deviceStats.reduce((acc, item) => {
           acc[item._id] = item.count;
           return acc;
         }, {}),
