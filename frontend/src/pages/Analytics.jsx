@@ -67,19 +67,46 @@ export default function Analytics() {
     );
   }
 
-  // Prepare chart data
-  const dailyScansData = {
-    labels: analytics.dailyScans?.map((d) => d.date) || [],
-    datasets: [
-      {
-        label: 'Daily Scans',
-        data: analytics.dailyScans?.map((d) => d.count) || [],
-        borderColor: '#4f46e5',
-        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-        tension: 0.4,
-      },
-    ],
+  // Prepare chart data - Generate last 30 days with zero-filled data
+  const generateDailyScansData = () => {
+    const dailyDistribution = analytics.dailyDistribution || {};
+    const today = new Date();
+    const dates = [];
+    const counts = [];
+    
+    // Generate last 30 days
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dates.push(dateStr);
+      counts.push(dailyDistribution[dateStr] || 0);
+    }
+    
+    return {
+      labels: dates.map(date => {
+        const d = new Date(date);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }),
+      datasets: [
+        {
+          label: 'Daily Scans',
+          data: counts,
+          borderColor: '#4f46e5',
+          backgroundColor: 'rgba(79, 70, 229, 0.1)',
+          tension: 0.4,
+          fill: true,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#4f46e5',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+        },
+      ],
+    };
   };
+
+  const dailyScansData = generateDailyScansData();
 
   const deviceData = {
     labels: Object.keys(analytics.deviceDistribution || {}),
@@ -103,13 +130,83 @@ export default function Analytics() {
     ],
   };
 
+  // Chart options for Daily Scans
+  const dailyScansOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        padding: 12,
+        titleFont: {
+          size: 14,
+          weight: 'bold'
+        },
+        bodyFont: {
+          size: 13
+        },
+        callbacks: {
+          title: function(context) {
+            return `Date: ${context[0].label}`;
+          },
+          label: function(context) {
+            return `Scans: ${context.parsed.y}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          maxRotation: 45,
+          minRotation: 45,
+          font: {
+            size: 11
+          }
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.05)'
+        },
+        ticks: {
+          stepSize: 1,
+          font: {
+            size: 11
+          },
+          callback: function(value) {
+            if (Math.floor(value) === value) {
+              return value;
+            }
+          }
+        }
+      }
+    },
+    interaction: {
+      intersect: false,
+      mode: 'index'
+    },
+    elements: {
+      point: {
+        hoverRadius: 8
+      }
+    }
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         <Navbar />
         <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-6xl mx-auto">
+          <div className="max-w-6xl mx-auto pb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">QR Code Analytics</h1>
 
             {error && (
@@ -144,17 +241,23 @@ export default function Analytics() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
               <div className="bg-white rounded-lg shadow p-6">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Daily Scans (Last 30 Days)</h2>
-                <Line data={dailyScansData} options={{ responsive: true, maintainAspectRatio: false }} height={300} />
+                <div className="h-64">
+                  <Line data={dailyScansData} options={dailyScansOptions} />
+                </div>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
                 <h2 className="text-lg font-semibold text-gray-800 mb-4">Device Distribution</h2>
-                <Pie data={deviceData} options={{ responsive: true, maintainAspectRatio: false }} height={300} />
+                <div className="h-64">
+                  <Pie data={deviceData} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
               </div>
             </div>
 
             <div className="bg-white rounded-lg shadow p-6 mb-6">
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Top Countries</h2>
-              <Bar data={countryData} options={{ responsive: true, maintainAspectRatio: false }} height={300} />
+              <div className="h-64">
+                <Bar data={countryData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
             </div>
 
             {/* Recent Scans */}

@@ -57,6 +57,10 @@ export const qrCodeAPI = {
   getQRCodeByProfile: (profileId) => api.get(`/qr-codes/profile/${profileId}`),
   regenerateQRCode: (profileId) => api.post(`/qr-codes/regenerate/${profileId}`),
   downloadQRCode: (profileId) => api.get(`/qr-codes/download/${profileId}`, { responseType: 'blob' }),
+  downloadBusinessCard: (profileId, variant = 'modern') => api.get(`/qr-codes/download-card/${profileId}`, { 
+  params: { variant },
+  responseType: 'blob' 
+}),
 };
 
 // Analytics API calls
@@ -85,6 +89,26 @@ export const adminAPI = {
   getAllScanLogs: (page = 1, limit = 50) =>
     api.get('/admin/scan-logs', { params: { page, limit } }),
   getOverallAnalytics: () => api.get('/admin/analytics'),
+};
+
+// Helper function to get backend URL for images
+export const getBackendUrl = () => {
+  const apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  return apiBaseUrl.replace('/api', '');
+};
+
+// Helper function to fetch profile image as base64
+export const getProfileImage = async (filename) => {
+  try {
+    const response = await api.get(`/profiles/image/${filename}`);
+    if (response.data.success) {
+      return response.data.data.imageUrl;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching profile image:', error);
+    return null;
+  }
 };
 
 export default api;

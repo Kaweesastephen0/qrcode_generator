@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Phone, Mail, Globe } from 'lucide-react';
 import { profileAPI, analyticsAPI } from '../api/client.js';
+import BusinessCard from '../components/BusinessCard.jsx';
 
 export default function PublicCardView() {
   const { profileId } = useParams();
@@ -51,73 +52,47 @@ export default function PublicCardView() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-sm w-full overflow-hidden">
-        {/* Header */}
-        <div className="bg-indigo-600 h-32"></div>
-
-        {/* Profile Card */}
-        <div className="px-6 pb-6">
-          <div className="text-center -mt-16 mb-4">
-            {profile.profilePhoto ? (
-              <img
-                src={profile.profilePhoto}
-                alt={profile.fullName}
-                className="w-32 h-32 rounded-full border-4 border-white shadow-lg mx-auto object-cover"
-              />
-            ) : (
-              <div className="w-32 h-32 rounded-full border-4 border-white shadow-lg mx-auto bg-indigo-200 flex items-center justify-center text-4xl font-bold text-indigo-600">
-                {profile.fullName.charAt(0)}
-              </div>
-            )}
-          </div>
-
-          <h1 className="text-2xl font-bold text-gray-800 text-center">{profile.fullName}</h1>
-          <p className="text-indigo-600 font-semibold text-center">{profile.position}</p>
-          <p className="text-gray-600 text-center">{profile.companyName}</p>
-
-          {profile.description && (
-            <p className="text-gray-600 text-center mt-3 text-sm">{profile.description}</p>
-          )}
-
-          {/* Contact Info */}
-          <div className="mt-6 space-y-3 border-t pt-6">
-            <div className="flex items-center justify-center space-x-2 text-gray-700">
-              <Mail className="w-4 h-4" />
-              <a href={`mailto:${profile.email}`} className="hover:text-indigo-600">
-                {profile.email}
-              </a>
-            </div>
-
-            <div className="flex items-center justify-center space-x-2 text-gray-700">
-              <Phone className="w-4 h-4" />
-              <a href={`tel:${profile.phone}`} className="hover:text-indigo-600">
-                {profile.phone}
-              </a>
-            </div>
-
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12">
+      <div className="w-full max-w-4xl">
+        {/* Professional Business Card */}
+        <BusinessCard
+          profile={profile}
+          qrCodeUrl={null} // Public view doesn't show QR code
+          variant="modern"
+          showQR={false}
+          className="mb-8"
+        />
+        
+        {/* Additional Contact Actions */}
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a
+              href={`mailto:${profile.email}`}
+              className="flex items-center justify-center px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Send Email
+            </a>
+            <a
+              href={`tel:${profile.phone}`}
+              className="flex items-center justify-center px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+            >
+              <Phone className="w-4 h-4 mr-2" />
+              Call Now
+            </a>
             {profile.website && (
-              <div className="flex items-center justify-center space-x-2 text-gray-700">
-                <Globe className="w-4 h-4" />
-                <a
-                  href={profile.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-indigo-600 truncate"
-                >
-                  {profile.website}
-                </a>
-              </div>
-            )}
-
-            {profile.address && (
-              <div className="flex items-center justify-center space-x-2 text-gray-700">
-                <span>📍</span>
-                <span>{profile.address}</span>
-              </div>
+              <a
+                href={profile.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors sm:col-span-2"
+              >
+                <Globe className="w-4 h-4 mr-2" />
+                Visit Website
+              </a>
             )}
           </div>
-
           {/* Social Links */}
           {profile.socialLinks && Object.keys(profile.socialLinks).some((key) => profile.socialLinks[key]) && (
             <div className="mt-6 pt-6 border-t">

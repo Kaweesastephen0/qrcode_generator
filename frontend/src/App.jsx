@@ -7,6 +7,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import UserDashboard from './pages/UserDashboard.jsx';
 import CreateProfile from './pages/CreateProfile.jsx';
+import EditProfile from './pages/EditProfile.jsx';
 import MyProfiles from './pages/MyProfiles.jsx';
 import Analytics from './pages/Analytics.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
@@ -54,6 +55,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CreateProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-profile/:profileId"
+            element={
+              <ProtectedRoute>
+                <EditProfile />
               </ProtectedRoute>
             }
           />
