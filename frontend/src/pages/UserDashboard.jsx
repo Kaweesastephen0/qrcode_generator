@@ -27,13 +27,13 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col lg:ml-0">
         <Navbar />
-        <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+        <div className="flex-1 overflow-auto p-4 sm:p-6">
+          <div className="max-w-7xl mx-auto">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">Dashboard</h1>
 
             {error && (
               <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">

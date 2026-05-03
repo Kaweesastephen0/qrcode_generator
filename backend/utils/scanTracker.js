@@ -2,6 +2,7 @@ import geoip from 'geoip-lite';
 import UAParser from 'ua-parser-js';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
 import ScanLog from '../models/ScanLog.js';
 
 /**
@@ -276,115 +277,77 @@ class ScanTracker {
             totalScans: 1,
             uniqueVisitors: { $size: '$uniqueVisitors' },
             returningVisitors: 1,
-            deviceBreakdown: {
-              $reduce: {
-                input: '$deviceTypes',
-                initialValue: {},
-                in: {
-                  $mergeObjects: [
-                    '$$value',
-                    {
-                      $arrayToObject: [
-                        [{ k: '$$this', v: { $add: [{ $ifNull: [{ $getField: { field: '$$this', input: '$$value' } }, 0] }, 1] } }]
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            browserBreakdown: {
-              $reduce: {
-                input: '$browsers',
-                initialValue: {},
-                in: {
-                  $mergeObjects: [
-                    '$$value',
-                    {
-                      $arrayToObject: [
-                        [{ k: '$$this', v: { $add: [{ $ifNull: [{ $getField: { field: '$$this', input: '$$value' } }, 0] }, 1] } }]
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            topCountries: {
-              $slice: [
-                {
-                  $sort: {
-                    input: {
-                      $map: {
-                        input: { $setUnion: ['$countries', []] },
-                        as: 'country',
-                        in: {
-                          country: '$$country',
-                          count: { $size: { $filter: { input: '$countries', cond: { $eq: ['$$this', '$$country'] } } } }
-                        }
-                      }
-                    },
-                    by: { count: -1 }
-                  }
-                },
-                10
-              ]
-            },
-            topCities: {
-              $slice: [
-                {
-                  $sort: {
-                    input: {
-                      $map: {
-                        input: { $setUnion: ['$cities', []] },
-                        as: 'city',
-                        in: {
-                          city: '$$city',
-                          count: { $size: { $filter: { input: '$cities', cond: { $eq: ['$$this', '$$city'] } } } }
-                        }
-                      }
-                    },
-                    by: { count: -1 }
-                  }
-                },
-                10
-              ]
-            },
-            hourlyDistribution: {
-              $reduce: {
-                input: '$scanHours',
-                initialValue: {},
-                in: {
-                  $mergeObjects: [
-                    '$$value',
-                    {
-                      $arrayToObject: [
-                        [{ k: { $toString: '$$this' }, v: { $add: [{ $ifNull: [{ $getField: { field: { $toString: '$$this' }, input: '$$value' } }, 0] }, 1] } }]
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            dailyDistribution: {
-              $reduce: {
-                input: '$scanDays',
-                initialValue: {},
-                in: {
-                  $mergeObjects: [
-                    '$$value',
-                    {
-                      $arrayToObject: [
-                        [{ k: '$$this', v: { $add: [{ $ifNull: [{ $getField: { field: '$$this', input: '$$value' } }, 0] }, 1] } }]
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
+            deviceTypes: 1,
+            browsers: 1,
+            countries: 1,
+            cities: 1,
+            scanHours: 1,
+            scanDays: 1
           }
         }
       ]);
+
+    // Process the aggregated data in JavaScript to avoid complex MongoDB operations
+    if (analytics.length > 0) {
+      const data = analytics[0];
       
-      return analytics[0] || {
+      // Process device breakdown
+      const deviceBreakdown = {};
+      data.deviceTypes.forEach(device => {
+        deviceBreakdown[device] = (deviceBreakdown[device] || 0) + 1;
+      });
+
+      // Process browser breakdown
+      const browserBreakdown = {};
+      data.browsers.forEach(browser => {
+        browserBreakdown[browser] = (browserBreakdown[browser] || 0) + 1;
+      });
+
+      // Process top countries
+      const countryCounts = {};
+      data.countries.forEach(country => {
+        countryCounts[country] = (countryCounts[country] || 0) + 1;
+      });
+      const topCountries = Object.entries(countryCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10)
+        .map(([country, count]) => ({ country, count }));
+
+      // Process top cities
+      const cityCounts = {};
+      data.cities.forEach(city => {
+        cityCounts[city] = (cityCounts[city] || 0) + 1;
+      });
+      const topCities = Object.entries(cityCounts)
+        .sort(([,a], [,b]) => b - a)
+        .slice(0, 10)
+        .map(([city, count]) => ({ city, count }));
+
+      // Process hourly distribution
+      const hourlyDistribution = {};
+      data.scanHours.forEach(hour => {
+        hourlyDistribution[hour] = (hourlyDistribution[hour] || 0) + 1;
+      });
+
+      // Process daily distribution
+      const dailyDistribution = {};
+      data.scanDays.forEach(day => {
+        dailyDistribution[day] = (dailyDistribution[day] || 0) + 1;
+      });
+
+      return {
+        totalScans: data.totalScans,
+        uniqueVisitors: data.uniqueVisitors,
+        returningVisitors: data.returningVisitors,
+        deviceBreakdown,
+        browserBreakdown,
+        topCountries,
+        topCities,
+        hourlyDistribution,
+        dailyDistribution
+      };
+    } else {
+      return {
         totalScans: 0,
         uniqueVisitors: 0,
         returningVisitors: 0,
@@ -395,10 +358,11 @@ class ScanTracker {
         hourlyDistribution: {},
         dailyDistribution: {}
       };
-    } catch (error) {
-      console.error('Error getting QR analytics:', error);
-      throw new Error('Failed to get QR analytics');
     }
+  } catch (error) {
+    console.error('Error getting QR analytics:', error);
+    throw new Error('Failed to get QR analytics');
+  }
   }
 }
 

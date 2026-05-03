@@ -74,24 +74,24 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-md mx-auto"
       >
-        <Card variant="elevated" padding="lg">
+        <Card variant="elevated" padding="lg" className="sm:shadow-xl">
           {/* Header */}
-          <motion.div variants={itemVariants} className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-2xl mb-4">
-              <QrCode className="w-8 h-8 text-white" />
+          <motion.div variants={itemVariants} className="text-center mb-6 sm:mb-8">
+            <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-purple-600 rounded-2xl mb-4">
+              <QrCode className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-purple-600">
+            <h1 className="text-2xl sm:text-3xl font-bold text-purple-600">
               Create Account
             </h1>
-            <p className="text-gray-600 mt-2">Join QR Generator Platform</p>
+            <p className="text-gray-600 mt-2 text-sm sm:text-base">Join QR Generator Platform</p>
           </motion.div>
 
           {/* Error message */}

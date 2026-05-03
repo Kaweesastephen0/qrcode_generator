@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Upload, X, Camera } from 'lucide-react';
 import axios from 'axios';
-import { profileAPI } from '../api/client.js';
+import { profileAPI, getBackendUrl } from '../api/client.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
 
-export default function CreateProfile() {
+export default function EditProfile() {
+  const { profileId } = useParams();
   const [formData, setFormData] = useState({
     fullName: '',
     position: '',
@@ -31,7 +32,60 @@ export default function CreateProfile() {
   const [successMessage, setSuccessMessage] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [existingProfile, setExistingProfile] = useState(null);
+  const [dataLoading, setDataLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProfile();
+  }, [profileId]);
+
+  const fetchProfile = async () => {
+    try {
+      setDataLoading(true);
+      const response = await profileAPI.getProfile(profileId);
+      console.log('API Response:', response); // Debug log
+      const profile = response.data.data.profile;
+      console.log('Profile data:', profile); // Debug log
+      setExistingProfile(profile);
+      
+      const newFormData = {
+        fullName: profile.fullName || '',
+        position: profile.position || '',
+        companyName: profile.companyName || '',
+        phone: profile.phone || '',
+        email: profile.email || '',
+        website: profile.website || '',
+        address: profile.address || '',
+        description: profile.description || '',
+        socialLinks: profile.socialLinks || {
+          linkedin: '',
+          facebook: '',
+          twitter: '',
+          instagram: '',
+          github: '',
+          whatsapp: '',
+        },
+      };
+      
+      console.log('Form data being set:', newFormData); // Debug log
+      setFormData(newFormData);
+      
+      // Set existing profile photo
+      if (profile.profilePhoto) {
+        const imageUrl = profile.profilePhoto.startsWith('http') 
+          ? profile.profilePhoto 
+          : `${getBackendUrl()}/uploads/profiles/${profile.profilePhoto}`;
+        console.log('Setting image preview URL:', imageUrl);
+        setImagePreview(imageUrl);
+      }
+    } catch (err) {
+      console.error('Fetch profile error:', err); // Debug log
+      setError('Failed to load profile');
+    } finally {
+      setDataLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +132,11 @@ export default function CreateProfile() {
 
   const removeImage = () => {
     setProfileImage(null);
-    setImagePreview(null);
+    if (!existingProfile?.profilePhoto) {
+      setImagePreview(null);
+    } else {
+      setImagePreview(existingProfile.profilePhoto);
+    }
     setError('');
   };
 
@@ -86,6 +144,21 @@ export default function CreateProfile() {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
+
+    // Prevent submission if data is still loading
+    if (dataLoading) {
+      setError('Please wait for profile data to load');
+      return;
+    }
+
+    console.log('Form data on submit:', formData); // Debug log
+    console.log('Required fields check:', {
+      fullName: formData.fullName,
+      position: formData.position,
+      companyName: formData.companyName,
+      phone: formData.phone,
+      email: formData.email
+    }); // Debug log
 
     if (!formData.fullName || !formData.position || !formData.companyName || !formData.phone || !formData.email) {
       setError('Please fill in all required fields');
@@ -109,14 +182,22 @@ export default function CreateProfile() {
       
       // Add profile image if exists
       if (profileImage) {
+        console.log('Adding profile image to FormData:', profileImage);
+        console.log('Profile image details:', {
+          name: profileImage.name,
+          size: profileImage.size,
+          type: profileImage.type
+        });
         submitData.append('profilePhoto', profileImage);
+      } else {
+        console.log('No profile image to upload');
       }
 
       // Create a custom axios instance for multipart form data
       const token = localStorage.getItem('token');
       
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/profiles/create`,
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/profiles/${profileId}`,
         submitData,
         {
           headers: {
@@ -126,12 +207,12 @@ export default function CreateProfile() {
         }
       );
       
-      setSuccessMessage('Profile created successfully!');
+      setSuccessMessage('Profile updated successfully!');
       setTimeout(() => {
         navigate('/my-profiles');
       }, 2000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create profile');
+      setError(err.response?.data?.message || 'Failed to update profile');
     } finally {
       setLoading(false);
     }
@@ -144,7 +225,7 @@ export default function CreateProfile() {
         <Navbar />
         <div className="flex-1 overflow-auto p-6">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">Create Business Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-6">Edit Business Profile</h1>
 
             {error && (
               <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
@@ -155,6 +236,12 @@ export default function CreateProfile() {
             {successMessage && (
               <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
                 {successMessage}
+              </div>
+            )}
+
+            {dataLoading && (
+              <div className="mb-4 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-lg">
+                Loading profile data...
               </div>
             )}
 
@@ -207,7 +294,7 @@ export default function CreateProfile() {
                       </label>
                     </div>
                     <p className="text-xs text-gray-500 mt-2">
-                      Optional: Add a professional profile photo that will appear on your business card
+                      Optional: Update your profile photo that will appear on your business card
                     </p>
                   </div>
                 </div>
@@ -397,7 +484,7 @@ export default function CreateProfile() {
                   disabled={loading}
                   className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition disabled:opacity-50"
                 >
-                  {loading ? 'Creating...' : 'Create Profile'}
+                  {loading ? 'Updating...' : 'Update Profile'}
                 </button>
                 <button
                   type="button"
