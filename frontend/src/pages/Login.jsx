@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Mail, Lock, QrCode, ArrowRight, Shield, CheckCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import Button from '../components/ui/Button.jsx';
+import Input from '../components/ui/Input.jsx';
+import Card from '../components/ui/Card.jsx';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -30,67 +35,118 @@ export default function Login() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">QR Card</h1>
-          <p className="text-gray-600">Business Card & Analytics Platform</p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative w-full max-w-md"
+      >
+        <Card variant="elevated" padding="lg">
+          {/* Header */}
+          <motion.div variants={itemVariants} className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
+              <QrCode className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-blue-600">
+              QR Generator
+            </h1>
+            <p className="text-gray-600 mt-2">Business Card & Analytics Platform</p>
+          </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
+          {/* Error message */}
+          {error && (
+            <motion.div
+              variants={itemVariants}
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700"
+            >
+              {error}
+            </motion.div>
+          )}
+
+          {/* Login form */}
+          <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-6">
+            <Input
               type="email"
+              label="Email Address"
+              placeholder="Enter your email"
+              icon={Mail}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="admin@qrcode.com"
+              error={error && !email ? 'Email is required' : ''}
+              required
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
+            <Input
               type="password"
+              label="Password"
+              placeholder="Enter your password"
+              icon={Lock}
+              showPasswordToggle
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="••••••••"
+              error={error && !password ? 'Password is required' : ''}
+              required
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              disabled={loading}
+              className="w-full"
+              icon={ArrowRight}
+              iconPosition="right"
+            >
+              {loading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </motion.form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-indigo-600 hover:text-indigo-700 font-semibold">
-              Register
-            </Link>
-          </p>
-        </div>
+          {/* Footer */}
+          <motion.div variants={itemVariants} className="mt-8 text-center">
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <Link 
+                to="/register" 
+                className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors"
+              >
+                Create Account
+              </Link>
+            </p>
+          </motion.div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-          <p className="mb-2"><strong>Demo Admin Credentials:</strong></p>
-          <p>Email: admin@qrcode.com</p>
-          <p>Password: admin123</p>
-        </div>
-      </div>
+          {/* Demo credentials hint */}
+          <motion.div variants={itemVariants} className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <div className="flex items-start gap-3">
+              <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-blue-900">Demo Account</p>
+                <p className="text-sm text-blue-700 mt-1">admin@qrcode.com / password123</p>
+              </div>
+            </div>
+          </motion.div>
+        </Card>
+      </motion.div>
     </div>
   );
 }

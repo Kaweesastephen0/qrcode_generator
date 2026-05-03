@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Mail, Phone } from 'lucide-react';
 import { profileAPI, qrCodeAPI } from '../api/client.js';
 import Navbar from '../components/Navbar.jsx';
 import Sidebar from '../components/Sidebar.jsx';
@@ -107,15 +108,21 @@ export default function MyProfiles() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {profiles.map((profile) => (
                   <div key={profile._id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
-                    <div className="bg-gradient-to-r from-indigo-600 to-blue-600 h-24"></div>
+                    <div className="bg-indigo-600 h-24"></div>
                     <div className="px-6 pb-6">
                       <h3 className="text-xl font-bold text-gray-800 mt-2">{profile.fullName}</h3>
                       <p className="text-indigo-600 font-semibold">{profile.position}</p>
                       <p className="text-gray-600 text-sm mb-4">{profile.companyName}</p>
 
                       <div className="space-y-2 mb-4 text-sm">
-                        <p className="text-gray-600">📧 {profile.email}</p>
-                        <p className="text-gray-600">📱 {profile.phone}</p>
+                        <p className="text-gray-600 flex items-center gap-2">
+                          <Mail className="w-4 h-4" />
+                          {profile.email}
+                        </p>
+                        <p className="text-gray-600 flex items-center gap-2">
+                          <Phone className="w-4 h-4" />
+                          {profile.phone}
+                        </p>
                       </div>
 
                       <div className="flex gap-2">

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { User, Mail, Lock, QrCode, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import Button from '../components/ui/Button.jsx';
+import Input from '../components/ui/Input.jsx';
+import Card from '../components/ui/Card.jsx';
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -51,87 +56,151 @@ export default function Register() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h1>
-          <p className="text-gray-600">Join QR Card Platform</p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative w-full max-w-md"
+      >
+        <Card variant="elevated" padding="lg">
+          {/* Header */}
+          <motion.div variants={itemVariants} className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-2xl mb-4">
+              <QrCode className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-purple-600">
+              Create Account
+            </h1>
+            <p className="text-gray-600 mt-2">Join QR Generator Platform</p>
+          </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-            <input
+          {/* Error message */}
+          {error && (
+            <motion.div
+              variants={itemVariants}
+              className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700"
+            >
+              {error}
+            </motion.div>
+          )}
+
+          {/* Registration form */}
+          <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-6">
+            <Input
               type="text"
               name="fullName"
+              label="Full Name"
+              placeholder="Enter your full name"
+              icon={User}
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="John Doe"
+              error={error && !formData.fullName ? 'Full name is required' : ''}
+              required
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
+            <Input
               type="email"
               name="email"
+              label="Email Address"
+              placeholder="Enter your email"
+              icon={Mail}
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="you@example.com"
+              error={error && !formData.email ? 'Email is required' : ''}
+              required
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
+            <Input
               type="password"
               name="password"
+              label="Password"
+              placeholder="Create a password"
+              icon={Lock}
+              showPasswordToggle
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="••••••••"
+              error={error && !formData.password ? 'Password is required' : ''}
+              helperText="Must be at least 6 characters"
+              required
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-            <input
+            <Input
               type="password"
               name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Confirm your password"
+              icon={Lock}
+              showPasswordToggle
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              placeholder="••••••••"
+              error={error && formData.password !== formData.confirmPassword ? 'Passwords do not match' : ''}
+              required
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              disabled={loading}
+              className="w-full"
+              icon={ArrowRight}
+              iconPosition="right"
+            >
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </Button>
+          </motion.form>
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-600">
-            Already have an account?{' '}
-            <Link to="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
-              Login
-            </Link>
-          </p>
-        </div>
-      </div>
+          {/* Footer */}
+          <motion.div variants={itemVariants} className="mt-8 text-center">
+            <p className="text-gray-600">
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className="text-purple-600 hover:text-purple-700 font-semibold hover:underline transition-colors"
+              >
+                Sign In
+              </Link>
+            </p>
+          </motion.div>
+
+          {/* Features highlight */}
+          <motion.div variants={itemVariants} className="mt-8 space-y-3">
+            <div className="flex items-center text-sm text-gray-600">
+              <CheckCircle className="w-4 h-4 text-green-600 mr-3 flex-shrink-0" />
+              Create unlimited QR codes
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <CheckCircle className="w-4 h-4 text-green-600 mr-3 flex-shrink-0" />
+              Advanced analytics dashboard
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <CheckCircle className="w-4 h-4 text-green-600 mr-3 flex-shrink-0" />
+              Mobile-optimized business cards
+            </div>
+          </motion.div>
+        </Card>
+      </motion.div>
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import geoip from 'geoip-lite';
 
 const scanLogSchema = new mongoose.Schema(
   {
@@ -22,32 +21,15 @@ const scanLogSchema = new mongoose.Schema(
       type: String,
       required: [true, 'IP Address is required'],
     },
-    userAgent: {
-      type: String,
-      default: null,
-    },
-    deviceType: {
-      type: String,
-      enum: ['mobile', 'tablet', 'desktop'],
-      default: 'desktop',
-    },
-    browser: {
-      type: String,
-      default: null,
-    },
-    operatingSystem: {
-      type: String,
-      default: null,
-    },
     city: {
       type: String,
       default: null,
     },
-    country: {
+    region: {
       type: String,
       default: null,
     },
-    countryCode: {
+    country: {
       type: String,
       default: null,
     },
@@ -59,7 +41,69 @@ const scanLogSchema = new mongoose.Schema(
       type: Number,
       default: null,
     },
-    timestamp: {
+    userAgent: {
+      type: String,
+      default: null,
+    },
+    browser: {
+      type: String,
+      default: null,
+    },
+    browserVersion: {
+      type: String,
+      default: null,
+    },
+    operatingSystem: {
+      type: String,
+      default: null,
+    },
+    deviceVendor: {
+      type: String,
+      default: null,
+    },
+    deviceModel: {
+      type: String,
+      default: null,
+    },
+    deviceType: {
+      type: String,
+      enum: ['mobile', 'tablet', 'desktop', 'bot'],
+      default: 'desktop',
+    },
+    platform: {
+      type: String,
+      default: null,
+    },
+    referrer: {
+      type: String,
+      default: null,
+    },
+    visitorFingerprint: {
+      type: String,
+      required: [true, 'Visitor fingerprint is required'],
+      index: true,
+    },
+    visitorStatus: {
+      type: String,
+      enum: ['first_time', 'returning'],
+      default: 'first_time',
+    },
+    language: {
+      type: String,
+      default: null,
+    },
+    scanHour: {
+      type: Number,
+      min: 0,
+      max: 23,
+      required: true,
+    },
+    scanDay: {
+      type: String,
+      enum: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+      required: true,
+    },
+    scannedAt: {
       type: Date,
       default: Date.now,
       index: true,
@@ -69,8 +113,13 @@ const scanLogSchema = new mongoose.Schema(
 );
 
 // Index for aggregation queries
-scanLogSchema.index({ qrCodeId: 1, timestamp: -1 });
-scanLogSchema.index({ userId: 1, timestamp: -1 });
-scanLogSchema.index({ profileId: 1, timestamp: -1 });
+scanLogSchema.index({ qrCodeId: 1, scannedAt: -1 });
+scanLogSchema.index({ userId: 1, scannedAt: -1 });
+scanLogSchema.index({ profileId: 1, scannedAt: -1 });
+scanLogSchema.index({ visitorFingerprint: 1, scannedAt: -1 });
+scanLogSchema.index({ country: 1, scannedAt: -1 });
+scanLogSchema.index({ deviceType: 1, scannedAt: -1 });
+scanLogSchema.index({ scanHour: 1 });
+scanLogSchema.index({ scanDay: 1 });
 
 export default mongoose.model('ScanLog', scanLogSchema);
