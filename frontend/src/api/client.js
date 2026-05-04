@@ -100,6 +100,11 @@ export const getBackendUrl = () => {
   return apiBaseUrl.replace('/api', '');
 };
 
+// Helper function to get ngrok URL for QR code access
+export const getNgrokUrl = () => {
+  return import.meta.env.__NGROK_URL__ || 'http://localhost:5173';
+};
+
 // Helper function to fetch profile image as base64
 export const getProfileImage = async (filename) => {
   try {

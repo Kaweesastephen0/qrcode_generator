@@ -17,6 +17,9 @@ import publicRoutes from './routes/publicRoutes.js';
 // Load environment variables
 dotenv.config();
 
+// Set ngrok URL for QR code generation
+process.env.NGROK_URL = 'https://unmoving-lucca-pseudoeconomically.ngrok-free.dev';
+
 // Setup __dirname for ES6 modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -134,15 +137,15 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 app.listen(PORT, () => {
   console.log(`
 ╔════════════════════════════════════════════════════╗
-║  QR Code Business Card Builder & Analytics        ║
-║  Server Running                                     ║
+║  QR Code Business Card Builder & Analytics         ║
+║  Server Running                                    ║
 ╠════════════════════════════════════════════════════╣
-║  Environment: ${NODE_ENV.padEnd(37)}║
-║  Port: ${String(PORT).padEnd(45)}║
-║  URL: http://localhost:${String(PORT).padEnd(31)}║
-║  Frontend: ${(process.env.FRONTEND_URL || 'http://localhost:5173').padEnd(29)}║
+║  Environment: ${NODE_ENV.padEnd(37)}               ║
+║  Port: ${String(PORT).padEnd(45)}                  ║
+║  URL: http://localhost:${String(PORT).padEnd(31)}  ║
+║  Frontend: ${(process.env.FRONTEND_URL).padEnd(29)}║
 ╚════════════════════════════════════════════════════╝
-  `);
+  `);  
 });
 
 export default app;

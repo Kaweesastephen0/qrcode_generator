@@ -32,10 +32,7 @@ export const createProfile = asyncHandler(async (req, res) => {
   // Handle profile photo if uploaded
   let profilePhotoUrl = null;
   if (req.file) {
-    console.log('File uploaded:', req.file);
-    console.log('File path:', req.file.path);
-    console.log('File filename:', req.file.filename);
-    // Store the relative path for frontend access
+
     profilePhotoUrl = req.file.filename;
   } else {
     console.log('No file uploaded in request');

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Phone, Mail, Globe } from 'lucide-react';
-import { profileAPI, analyticsAPI } from '../api/client.js';
+import { profileAPI, analyticsAPI, getNgrokUrl } from '../api/client.js';
 import BusinessCard from '../components/BusinessCard.jsx';
 
 export default function PublicCardView() {
