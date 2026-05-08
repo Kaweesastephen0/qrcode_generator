@@ -32,7 +32,7 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean),
+  origin: ['http://localhost:5173', 'http://localhost:3000','https://qrcode-generator-eight-sigma.vercel.app', process.env.FRONTEND_URL].filter(Boolean),
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -136,15 +136,13 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 
 app.listen(PORT, () => {
   console.log(`
-╔════════════════════════════════════════════════════╗
-║  QR Code Business Card Builder & Analytics         ║
-║  Server Running                                    ║
-╠════════════════════════════════════════════════════╣
-║  Environment: ${NODE_ENV.padEnd(37)}               ║
-║  Port: ${String(PORT).padEnd(45)}                  ║
-║  URL: http://localhost:${String(PORT).padEnd(31)}  ║
-║  Frontend: ${(process.env.FRONTEND_URL).padEnd(29)}║
-╚════════════════════════════════════════════════════╝
+        
+  Server Running                                    
+  Environment: ${NODE_ENV.padEnd(37)}               
+  Port: ${String(PORT).padEnd(45)}                  
+  URL: http://localhost:${String(PORT).padEnd(31)}  
+  Frontend: ${(process.env.FRONTEND_URL).padEnd(29)}
+
   `);  
 });
 
