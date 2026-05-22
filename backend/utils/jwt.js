@@ -1,31 +1,23 @@
 import jwt from 'jsonwebtoken';
 
-// Generate JWT Token
+/**
+ * Generate JWT token
+ */
 export const generateToken = (userId, role) => {
-  const token = jwt.sign(
+  return jwt.sign(
     { userId, role },
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '7d' }
   );
-  return token;
 };
 
-// Verify JWT Token
+/**
+ * Verify JWT token
+ */
 export const verifyToken = (token) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
+    return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
     throw new Error('Invalid or expired token');
-  }
-};
-
-// Decode Token (without verification)
-export const decodeToken = (token) => {
-  try {
-    const decoded = jwt.decode(token);
-    return decoded;
-  } catch (error) {
-    throw new Error('Invalid token');
   }
 };
