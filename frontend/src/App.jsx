@@ -5,6 +5,8 @@ import CreateProfile from './pages/CreateProfile';
 import MyProfiles from './pages/MyProfiles';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import PublicCardView from './pages/PublicCardView';
+
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/card/:profileId" element={<PublicCardView />} />
+
         </Routes>
       </AuthProvider>
     </BrowserRouter>
