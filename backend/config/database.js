@@ -2,18 +2,14 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.NODE_ENV === 'production' 
-      ? process.env.MONGODB_URI_PROD 
-      : process.env.MONGODB_URI;
+    // Just use one variable - works for both local and production
+    const mongoURI = process.env.MONGODB_URI;
 
     if (!mongoURI) {
       throw new Error('MongoDB URI is not defined in environment variables');
     }
 
-    const conn = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    const conn = await mongoose.connect(mongoURI);
 
     console.log(`✓ MongoDB Connected: ${conn.connection.host}`);
     return conn;
