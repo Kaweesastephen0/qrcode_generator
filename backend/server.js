@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/errorHandler.js';
 import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import qrCodeRoutes from './routes/qrCodeRoutes.js';
+import publicRoutes from './routes/publicRoutes.js'
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);      // POST /api/auth/register
 app.use('/api/profiles', profileRoutes); // POST /api/profiles/create
 app.use('/api/qr-codes', qrCodeRoutes);  // GET /api/qr-codes/generate/:profileId
+app.use('/', publicRoutes)
 
 // ✅ HEALTH CHECK ENDPOINT - ADD THIS LINE
 app.get('/api/health', (req, res) => {

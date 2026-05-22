@@ -27,3 +27,7 @@ export const qrCodeAPI = {
   generateQR: (profileId) => api.get(`/qr-codes/generate/${profileId}`),
 };
 
+export const publicAPI = {
+  getPublicProfile: (profileId) => api.get(`/card/${profileId}`),
+};
+

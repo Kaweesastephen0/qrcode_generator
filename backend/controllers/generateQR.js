@@ -66,3 +66,21 @@ export const getQRCodeByProfile = asyncHandler(async (req, res) => {
     data: { qrCode },
   });
 });
+
+export const getPublicProfile = asyncHandler(async (req, res) => {
+  const { profileId } = req.params;
+
+  const profile = await BusinessProfile.findById(profileId);
+
+  if (!profile) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({
+      success: false,
+      message: ERROR_MESSAGES.PROFILE_NOT_FOUND,
+    });
+  }
+
+  res.status(HTTP_STATUS.OK).json({
+    success: true,
+    data: { profile },
+  });
+});
