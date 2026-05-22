@@ -24,6 +24,15 @@ app.use('/api/auth', authRoutes);      // POST /api/auth/register
 app.use('/api/profiles', profileRoutes); // POST /api/profiles/create
 app.use('/api/qr-codes', qrCodeRoutes);  // GET /api/qr-codes/generate/:profileId
 
+// ✅ HEALTH CHECK ENDPOINT - ADD THIS LINE
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Error handling
 app.use(errorHandler);
 
