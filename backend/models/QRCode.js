@@ -20,28 +20,8 @@ const qrCodeSchema = new mongoose.Schema(
       type: String,
       required: [true, 'QR Code URL is required'],
     },
-    totalScans: {
-      type: Number,
-      default: 0,
-    },
-    lastScannedAt: {
-      type: Date,
-      default: null,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
   { timestamps: true }
 );
-
-// Indexes for faster queries
-qrCodeSchema.index({ profileId: 1 });
-qrCodeSchema.index({ userId: 1 });
 
 export default mongoose.model('QRCode', qrCodeSchema);

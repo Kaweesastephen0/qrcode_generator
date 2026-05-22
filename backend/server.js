@@ -1,148 +1,53 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import connectDB from './config/database.js';
-import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
 
-// Import routes
+// Import only 3 routes
 import authRoutes from './routes/authRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
 import qrCodeRoutes from './routes/qrCodeRoutes.js';
-import analyticsRoutes from './routes/analyticsRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
-import publicRoutes from './routes/publicRoutes.js';
 
-// Load environment variables
 dotenv.config();
-
-// Setup __dirname for ES6 modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Create Express app
 const app = express();
 
 // Connect to MongoDB
 connectDB();
 
 // Middleware
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'Content-Type']
-}));
-
-// Request logging middleware
-app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
-  next();
-});
-
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
-
-// Trust proxy for IP detection
-app.set('trust proxy', 1);
-
-// Serve uploaded files with proper CORS and caching
-const uploadsPath = path.join(__dirname, '../uploads');
-console.log('Serving static files from:', uploadsPath);
-
-app.use('/uploads', (req, res, next) => {
-  // Add comprehensive CORS headers
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Expose-Headers', 'Content-Length, Content-Type');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Cross-Origin-Resource-Policy', 'cross-origin');
-  res.header('Cross-Origin-Embedder-Policy', 'unsafe-none');
-  res.header('Cross-Origin-Opener-Policy', 'same-origin');
-  res.header('Timing-Allow-Origin', '*');
-  res.header('Referrer-Policy', 'no-referrer-when-downgrade');
-  res.header('Permissions-Policy', 'interest-cohort=()');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-}, express.static(uploadsPath, {
-  maxAge: '1d', // Cache for 1 day
-  etag: true,
-  lastModified: true,
-  setHeaders: (res, filePath) => {
-    // Set additional headers for images
-    if (filePath.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-      res.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate');
-      
-      // Set proper content type based on file extension
-      const ext = path.extname(filePath).toLowerCase();
-      switch (ext) {
-        case '.jpg':
-        case '.jpeg':
-          res.setHeader('Content-Type', 'image/jpeg');
-          break;
-        case '.png':
-          res.setHeader('Content-Type', 'image/png');
-          break;
-        case '.gif':
-          res.setHeader('Content-Type', 'image/gif');
-          break;
-        case '.webp':
-          res.setHeader('Content-Type', 'image/webp');
-          break;
-      }
-    }
-  }
-}));
+app.use(cors());
+app.use(express.json());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/profiles', profileRoutes);
-app.use('/api/qr-codes', qrCodeRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);      // POST /api/auth/register
+app.use('/api/profiles', profileRoutes); // POST /api/profiles/create
+app.use('/api/qr-codes', qrCodeRoutes);  // GET /api/qr-codes/generate/:profileId
 
-// Public routes (for QR code scans)
-app.use('/', publicRoutes);
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Server is running',
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// 404 handler
-app.use(notFound);
-
-// Error handling middleware
+// Error handling
 app.use(errorHandler);
 
-// Start server
+// DEBUG: Print all registered routes
+console.log('=== REGISTERED ROUTES ===');
+const printRoutes = (stack, base = '') => {
+  stack.forEach((r) => {
+    if (r.route) {
+      const methods = Object.keys(r.route.methods).join(', ').toUpperCase();
+      console.log(`${methods} ${base}${r.route.path}`);
+    } else if (r.handle && r.handle.stack) {
+      // This is a router middleware
+      const routerPath = r.regexp.source
+        .replace('\\/?(?=\\/|$)', '')
+        .replace(/\\\//g, '/')
+        .replace(/\^/g, '')
+        .replace(/\?/g, '');
+      printRoutes(r.handle.stack, routerPath);
+    }
+  });
+};
+printRoutes(app._router.stack);
+
 const PORT = process.env.PORT || 5000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-
 app.listen(PORT, () => {
-  console.log(`
-╔════════════════════════════════════════════════════╗
-║  QR Code Business Card Builder & Analytics        ║
-║  Server Running                                     ║
-╠════════════════════════════════════════════════════╣
-║  Environment: ${NODE_ENV.padEnd(37)}║
-║  Port: ${String(PORT).padEnd(45)}║
-║  URL: http://localhost:${String(PORT).padEnd(31)}║
-║  Frontend: ${(process.env.FRONTEND_URL || 'http://localhost:5173').padEnd(29)}║
-╚════════════════════════════════════════════════════╝
-  `);
+  console.log(`Server running on port ${PORT}`);
 });
-
-export default app;

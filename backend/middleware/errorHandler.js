@@ -1,6 +1,9 @@
 import { HTTP_STATUS, ERROR_MESSAGES } from '../config/constants.js';
 
-// Error handler middleware
+/**
+ * Central error handler middleware
+ * Handles Mongoose validation, duplicate keys, JWT errors, and generic errors
+ */
 export const errorHandler = (err, req, res, next) => {
   const statusCode = err.statusCode || HTTP_STATUS.INTERNAL_ERROR;
   const message = err.message || ERROR_MESSAGES.SERVER_ERROR;
@@ -47,15 +50,9 @@ export const errorHandler = (err, req, res, next) => {
   });
 };
 
-// 404 Not Found middleware
-export const notFound = (req, res) => {
-  res.status(HTTP_STATUS.NOT_FOUND).json({
-    success: false,
-    message: `Route ${req.originalUrl} not found`,
-  });
-};
-
-// Async error wrapper
+/**
+ * Wraps async functions to catch errors and pass to error handler
+ */
 export const asyncHandler = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);

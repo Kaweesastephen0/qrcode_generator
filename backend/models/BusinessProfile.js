@@ -7,19 +7,27 @@ const businessProfileSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'User ID is required'],
     },
-    fullName: {
-      type: String,
-      required: [true, 'Full name is required'],
-      trim: true,
-    },
-    position: {
-      type: String,
-      required: [true, 'Position is required'],
-      trim: true,
-    },
     companyName: {
       type: String,
       required: [true, 'Company name is required'],
+      trim: true,
+    },
+    location: {
+      type: String,
+      required: [true, 'Location is required'],
+      trim: true,
+    },
+    workingHours: {
+      type: String,
+      default: null,
+    },
+    slogan: {
+      type: String,
+      default: null,
+    },
+    projectsServices: {
+      type: String,
+      required: [true, 'Projects or services are required'],
       trim: true,
     },
     phone: {
@@ -35,19 +43,6 @@ const businessProfileSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    address: {
-      type: String,
-      default: null,
-    },
-    description: {
-      type: String,
-      default: null,
-      maxlength: [500, 'Description cannot exceed 500 characters'],
-    },
-    profilePhoto: {
-      type: String,
-      default: null,
-    },
     socialLinks: {
       linkedin: { type: String, default: null },
       facebook: { type: String, default: null },
@@ -56,23 +51,8 @@ const businessProfileSchema = new mongoose.Schema(
       github: { type: String, default: null },
       whatsapp: { type: String, default: null },
     },
-    qrCodeGenerated: {
-      type: Boolean,
-      default: false,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
   { timestamps: true }
 );
-
-// Index for faster queries
-businessProfileSchema.index({ userId: 1 });
 
 export default mongoose.model('BusinessProfile', businessProfileSchema);

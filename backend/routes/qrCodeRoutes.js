@@ -1,20 +1,13 @@
 import express from 'express';
-import {
-  getUserQRCodes,
-  getQRCodeByProfile,
-  regenerateQRCode,
-  downloadQRCode,
-  downloadBusinessCard,
-} from '../controllers/qrCodeController.js';
 import { authenticate } from '../middleware/auth.js';
+import { generateQR, getQRCodeByProfile } from '../controllers/generateQR.js';
 
 const router = express.Router();
 
-// Protected routes
-router.get('/my-codes', authenticate, getUserQRCodes);
+// GET /api/qr-codes/generate/:profileId (protected)
+router.get('/generate/:profileId', authenticate, generateQR);
+
+// GET /api/qr-codes/profile/:profileId (protected)
 router.get('/profile/:profileId', authenticate, getQRCodeByProfile);
-router.post('/regenerate/:profileId', authenticate, regenerateQRCode);
-router.get('/download/:profileId', authenticate, downloadQRCode);
-router.get('/download-card/:profileId', authenticate, downloadBusinessCard);
 
 export default router;
