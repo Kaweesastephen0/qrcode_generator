@@ -24,7 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);      // POST /api/auth/register
 app.use('/api/profiles', profileRoutes); // POST /api/profiles/create
 app.use('/api/qr-codes', qrCodeRoutes);  // GET /api/qr-codes/generate/:profileId
-app.use('/', publicRoutes)
+app.use('/api', publicRoutes)
 
 // ✅ HEALTH CHECK ENDPOINT - ADD THIS LINE
 app.get('/api/health', (req, res) => {
