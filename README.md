@@ -1,6 +1,6 @@
 # QR Generator - Premium Business Card & Analytics Platform
 
-## Overview
+## Overview 
 
 A production-grade MERN web application that creates stunning digital business cards with advanced QR code generation and comprehensive analytics intelligence. Built with modern ES6 syntax, premium UI/UX, and mobile-first responsive design.
 
