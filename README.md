@@ -6,7 +6,7 @@ A production-grade MERN web application that creates stunning digital business c
 
 ## Premium Features  
  
-### Modern UI/UX Design
+### Modern UI/UX Design 
 - **Glassmorphism Design**: Premium frosted glass effects with backdrop blur
 - **Framer Motion Animations**: Smooth micro-interactions and page transitions
 - **Lucide React Icons**: Beautiful, consistent icon system
